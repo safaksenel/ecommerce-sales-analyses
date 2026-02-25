@@ -12,3 +12,18 @@ prophet_df = df.groupby('order_date')['total_revenue'].sum().reset_index()
 prophet_df.columns = ['ds', 'y']    # Prophet requires the columns to be named 'ds' for the date and 'y' for the value
 
 print(prophet_df.head())
+
+
+# Initialize the Prophet model (with yearly and weekly seasonality)
+model = Prophet(yearly_seasonality=True, weekly_seasonality=True, daily_seasonality=False)
+
+# Fit the model to the data (this is where the actual forecasting happens)
+model.fit(prophet_df)
+
+# Create a DataFrame to hold predictions for the next 30 days
+future = model.make_future_dataframe(periods=30)
+
+# Generate the forecast
+forecast = model.predict(future)
+
+print(forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail())
