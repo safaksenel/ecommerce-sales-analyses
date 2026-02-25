@@ -1,6 +1,9 @@
 import pandas as pd
 from prophet import Prophet
 
+
+### Preparing the data for forecasting with Prophet###
+
 # Load the cleaned dataset
 df = pd.read_csv("../data/cleaned_data/cleaned_amazon_sales_dataset.csv")
 
@@ -13,6 +16,9 @@ prophet_df.columns = ['ds', 'y']    # Prophet requires the columns to be named '
 
 print(prophet_df.head())
 
+
+
+### Fitting the Model ###
 
 # Initialize the Prophet model (with yearly and weekly seasonality)
 model = Prophet(yearly_seasonality=True, weekly_seasonality=True, daily_seasonality=False)
@@ -27,3 +33,20 @@ future = model.make_future_dataframe(periods=30)
 forecast = model.predict(future)
 
 print(forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail())
+
+
+
+### Visualize the forecast ###
+
+import matplotlib.pyplot as plt
+
+# Plot the forecast
+fig1 = model.plot(forecast)
+plt.title("Amazon Toplam Gelir Tahmini")
+plt.xlabel("Tarih")
+plt.ylabel("Toplam Gelir (Revenue)")
+plt.show()
+
+# Plot the forecast components (trend, yearly seasonality, weekly seasonality)
+fig2 = model.plot_components(forecast)
+plt.show()
