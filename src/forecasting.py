@@ -1,9 +1,14 @@
-"""Forecasting models and helpers."""
+import pandas as pd
+from prophet import Prophet
 
-import numpy as np
+# Load the cleaned dataset
+df = pd.read_csv("../data/cleaned_data/cleaned_amazon_sales_dataset.csv")
 
+# Convert 'order_date' to datetime format
+df['order_date'] = pd.to_datetime(df['order_date'])
 
-def forecast_placeholder(series, periods=12):
-    """Return a naive forecasting placeholder (last-value)."""
-    last = series.iloc[-1]
-    return np.repeat(last, periods)
+# Prepare the data for Prophet
+prophet_df = df.groupby('order_date')['total_revenue'].sum().reset_index()
+prophet_df.columns = ['ds', 'y']    # Prophet requires the columns to be named 'ds' for the date and 'y' for the value
+
+print(prophet_df.head())
