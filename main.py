@@ -19,14 +19,14 @@ st.set_page_config(
 # Custom CSS for Modern Dark Mode Aesthetic
 st.markdown("""
     <style>
-    /* Global Variables - Deep Green Theme */
+    /* Global Variables - Professional Blue Theme */
     :root {
-        --bg-main: #060d08;
-        --bg-sidebar: #0a160e;
-        --bg-card: #112216;
-        --border-color: #1e3d29;
-        --accent-green: #2ecc71;
-        --text-main: #e0f2e9;
+        --bg-main: #010409;        /* Deepest Dark Blue */
+        --bg-sidebar: #0d1117;     /* Blue toned sidebar */
+        --bg-card: #161b22;        /* Mid tone for elements */
+        --border-color: #30363d;
+        --accent-blue: #58a6ff;    /* Primary highlight (Light Blue) */
+        --text-main: #f0f6fc;
     }
 
     /* Main Background */
@@ -50,11 +50,11 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
     }
     [data-testid="stMetricValue"] {
-        color: var(--accent-green) !important;
+        color: var(--accent-blue) !important;
         font-weight: 700;
     }
     [data-testid="stMetricLabel"] {
-        color: #8b9ea1 !important;
+        color: #8b949e !important;
     }
 
     /* Team Cards Fix */
@@ -69,7 +69,7 @@ st.markdown("""
     }
     .team-card:hover {
         transform: scale(1.02);
-        border-color: var(--accent-green);
+        border-color: var(--accent-blue);
     }
     .team-img {
         width: 65px;
@@ -80,7 +80,7 @@ st.markdown("""
         margin-bottom: 8px;
     }
     .member-name {
-        color: #f0fcf5 !important;
+        color: #f0f6fc !important;
         font-weight: 600;
         margin: 0;
     }
@@ -233,7 +233,7 @@ if df is not None:
             st.subheader("Revenue Trend over Time")
             daily_rev = filtered_df.groupby('order_date')['total_revenue'].sum().reset_index()
             fig_line = px.line(daily_rev, x='order_date', y='total_revenue', 
-                               template="plotly_dark", color_discrete_sequence=px.colors.sequential.Greens[::-1])
+                               template="plotly_dark", color_discrete_sequence=px.colors.sequential.Blues[::-1])
             fig_line.update_traces(line=dict(width=3))
             
             # Adjust Y-axis to start from 0 for better context
@@ -252,7 +252,7 @@ if df is not None:
             cat_rev = filtered_df.groupby('product_category')['total_revenue'].sum().reset_index()
             fig_pie = px.pie(cat_rev, values='total_revenue', names='product_category', 
                             hole=0.4, template="plotly_dark",
-                            color_discrete_sequence=px.colors.sequential.Greens[::-1])
+                            color_discrete_sequence=px.colors.sequential.Blues[::-1])
             fig_pie.update_layout(
                 paper_bgcolor="rgba(0,0,0,0)",
                 plot_bgcolor="rgba(0,0,0,0)",
@@ -267,7 +267,7 @@ if df is not None:
             st.subheader("Top Regions by Sales")
             reg_rev = filtered_df.groupby('customer_region')['total_revenue'].sum().sort_values(ascending=False).reset_index()
             fig_bar = px.bar(reg_rev, x='customer_region', y='total_revenue', 
-                            color='total_revenue', color_continuous_scale='Greens',
+                            color='total_revenue', color_continuous_scale='Blues',
                             template="plotly_dark")
             
             # Adjust Y-axis to start from 0 to show full bars
@@ -286,7 +286,7 @@ if df is not None:
             pay_dist = filtered_df['payment_method'].value_counts().reset_index()
             fig_donut = px.pie(pay_dist, values='count', names='payment_method', 
                                hole=0.4, template="plotly_dark",
-                               color_discrete_sequence=px.colors.sequential.Greens[::-1])
+                               color_discrete_sequence=px.colors.sequential.Blues[::-1])
             fig_donut.update_layout(
                 paper_bgcolor="rgba(0,0,0,0)",
                 plot_bgcolor="rgba(0,0,0,0)",
@@ -307,7 +307,7 @@ if df is not None:
             ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         ).reset_index()
         fig_day = px.bar(day_rev, x='day_of_week', y='total_revenue', 
-                        color='total_revenue', color_continuous_scale='Greens',
+                        color='total_revenue', color_continuous_scale='Blues',
                         labels={'total_revenue': 'Total Revenue ($)', 'day_of_week': 'Day'})
         
         # Adjust Y-axis to start from 0
@@ -327,7 +327,7 @@ if df is not None:
                                  hover_data=['product_id'], 
                                  opacity=0.5,
                                  size_max=12,
-                                 color_discrete_sequence=px.colors.sequential.Greens[::-1],
+                                 color_discrete_sequence=px.colors.sequential.Blues[::-1],
                                  template="plotly_dark",
                                  labels={'price': 'Unit Price ($)', 'total_revenue': 'Total Revenue ($)'})
         
@@ -379,7 +379,7 @@ if df is not None:
         fig_bubble = px.scatter(cat_stats, x='review_count', y='rating', 
                                size='total_revenue', color='product_category',
                                text='product_category', template="plotly_dark",
-                               color_discrete_sequence=px.colors.sequential.Greens[::-1])
+                               color_discrete_sequence=px.colors.sequential.Blues[::-1])
         fig_bubble.update_layout(
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)",
