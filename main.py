@@ -195,8 +195,8 @@ if df is not None:
                                template="plotly_white", color_discrete_sequence=['#1F618D'])
             fig_line.update_traces(line=dict(width=3))
             
-            # Adjust Y-axis for better visibility
-            fig_line.update_yaxes(range=[daily_rev['total_revenue'].min() * 0.9, daily_rev['total_revenue'].max() * 1.1])
+            # Adjust Y-axis to start from 0 for better context
+            fig_line.update_yaxes(range=[0, daily_rev['total_revenue'].max() * 1.1])
             fig_line.update_layout(yaxis_tickformat="$,.2s")
             
             st.plotly_chart(fig_line, use_container_width=True)
@@ -219,8 +219,8 @@ if df is not None:
                             color='total_revenue', color_continuous_scale='Viridis',
                             template="plotly_white")
             
-            # Adjust Y-axis to show differences between regions more clearly
-            fig_bar.update_yaxes(range=[reg_rev['total_revenue'].min() * 0.95, reg_rev['total_revenue'].max() * 1.05])
+            # Adjust Y-axis to start from 0 to show full bars
+            fig_bar.update_yaxes(range=[0, reg_rev['total_revenue'].max() * 1.1])
             fig_bar.update_layout(yaxis_tickformat="$,.2s")
             
             st.plotly_chart(fig_bar, use_container_width=True)
@@ -249,8 +249,8 @@ if df is not None:
                         color='total_revenue', color_continuous_scale='Viridis',
                         labels={'total_revenue': 'Total Revenue ($)', 'day_of_week': 'Day'})
         
-        # Adjust Y-axis to show differences more clearly
-        fig_day.update_yaxes(range=[day_rev['total_revenue'].min() * 0.95, day_rev['total_revenue'].max() * 1.05])
+        # Adjust Y-axis to start from 0
+        fig_day.update_yaxes(range=[0, day_rev['total_revenue'].max() * 1.1])
         fig_day.update_layout(yaxis_tickformat="$,.2s") # Compact currency format (e.g., $4.8M)
         
         st.plotly_chart(fig_day, use_container_width=True)
