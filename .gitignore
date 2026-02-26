@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+.DS_Store
+*.pkl
+.ipynb_checkpoints/
+data/raw_data/*
+!data/raw_data/.gitkeep
+data/cleaned_data/*
+!data/cleaned_data/.gitkeep
+.streamlit/
+*.pyc
+.env
