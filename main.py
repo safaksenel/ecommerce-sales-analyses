@@ -73,13 +73,7 @@ def load_model():
                 model = pickle.load(f)
             return model
         else:
-            # Debugging info
-            st.error(f"Model file not found at: {os.path.abspath(model_path)}")
-            st.write("Current directory contents:", os.listdir("."))
-            if os.path.exists("models"):
-                st.write("Contents of 'models' folder:", os.listdir("models"))
-            else:
-                st.write("'models' folder does not exist at root.")
+            st.error(f"Model file not found at: {model_path}")
             return None
     except Exception as e:
         st.error(f"Error loading model: {e}")

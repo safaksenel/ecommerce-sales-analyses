@@ -1,5 +1,5 @@
-pandas
-numpy
+pandas==2.2.2
+numpy==1.26.4
 matplotlib
 scikit-learn
 statsmodels
@@ -7,5 +7,5 @@ jupyter
 plotly
 streamlit>=1.31.0
 altair<5
-prophet
+prophet==1.1.5
 joblib
