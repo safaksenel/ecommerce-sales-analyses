@@ -66,26 +66,17 @@ def load_data():
 # Load Prophet Model
 @st.cache_resource
 def load_model():
-    model_json_path = "models/prophet_model.json"
-    model_pkl_path = "models/prophet_model.pkl"
-    
+    model_path = "models/prophet_model.pkl"
     try:
-        # Try loading JSON first (more stable across versions)
-        if os.path.exists(model_json_path):
-            from prophet.serialize import model_from_json
-            with open(model_json_path, 'r') as f:
-                return model_from_json(f.read())
-        
-        # Fallback to Pickle
-        if os.path.exists(model_pkl_path):
-            with open(model_pkl_path, 'rb') as f:
-                return pickle.load(f)
-        
-        st.error(f"Neither {model_json_path} nor {model_pkl_path} found.")
-        return None
+        if os.path.exists(model_path):
+            with open(model_path, 'rb') as f:
+                model = pickle.load(f)
+            return model
+        else:
+            st.error("Model file 'prophet_model.pkl' not found.")
+            return None
     except Exception as e:
         st.error(f"Error loading model: {e}")
-        st.info("Tip: If you see a StringDtype error, try saving your model as JSON using 'model_to_json' locally.")
         return None
 
 # Load the data and model

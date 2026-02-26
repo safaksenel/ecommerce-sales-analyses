@@ -1,8 +1,7 @@
 venv/
 __pycache__/
 .DS_Store
-# *.pkl
-!models/prophet_model.pkl
+*.pkl
 .ipynb_checkpoints/
 data/raw_data/*
 !data/raw_data/.gitkeep
