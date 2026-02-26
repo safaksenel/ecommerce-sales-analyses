@@ -16,37 +16,78 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for premium look
+# Custom CSS for Modern Dark Mode Aesthetic
 st.markdown("""
     <style>
-    .main {
-        background-color: #f8f9fa;
+    /* Global Variables - Deep Green Theme */
+    :root {
+        --bg-main: #060d08;
+        --bg-sidebar: #0a160e;
+        --bg-card: #112216;
+        --border-color: #1e3d29;
+        --accent-green: #2ecc71;
+        --text-main: #e0f2e9;
     }
-    .stMetric {
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    /* Main Background */
+    .stApp {
+        background-color: var(--bg-main);
+        color: var(--text-main);
     }
-    .sidebar .sidebar-content {
-        background-image: linear-gradient(#2e7bcf,#2e7bcf);
-        color: white;
+    
+    /* Sidebar Styling */
+    [data-testid="stSidebar"] {
+        background-color: var(--bg-sidebar) !important;
+        border-right: 1px solid var(--border-color);
     }
+
+    /* Metric Cards Fix */
+    div[data-testid="stMetric"] {
+        background-color: var(--bg-card) !important;
+        border: 1px solid var(--border-color) !important;
+        padding: 20px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+    }
+    [data-testid="stMetricValue"] {
+        color: var(--accent-green) !important;
+        font-weight: 700;
+    }
+    [data-testid="stMetricLabel"] {
+        color: #8b9ea1 !important;
+    }
+
+    /* Team Cards Fix */
     .team-card {
-        background-color: white;
-        padding: 10px;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        margin-bottom: 10px;
+        background-color: var(--bg-card);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 12px;
         text-align: center;
-        border: 1px solid #e0e0e0;
+        transition: transform 0.2s;
+    }
+    .team-card:hover {
+        transform: scale(1.02);
+        border-color: var(--accent-green);
     }
     .team-img {
-        width: 60px;
-        height: 60px;
+        width: 65px;
+        height: 65px;
         border-radius: 50%;
+        border: 2px solid var(--border-color);
         object-fit: cover;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
+    }
+    .member-name {
+        color: #f0fcf5 !important;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    /* Inputs & Selectors */
+    .stSelectbox, .stDateInput {
+        color: var(--text-main);
     }
     </style>
     """, unsafe_allow_html=True)
@@ -139,9 +180,9 @@ if df is not None:
     if selected_region != "All":
         filtered_df = filtered_df[filtered_df['customer_region'] == selected_region]
 
-    # Eğer filtreleme sonucu veri kalmazsa kullanıcıyı bilgilendir
+    # If no data remains after filtering, inform the user
     if filtered_df.empty:
-        st.warning(f"⚠️ Seçilen kriterlere uygun veri bulunamadı. Lütfen {data_min_date} ve {data_max_date} arasında bir seçim yapın.")
+        st.warning(f"⚠️ No data found for the selected criteria. Please select a range between {data_min_date} and {data_max_date}.")
         st.stop()
 
     # Team in Sidebar
@@ -158,7 +199,7 @@ if df is not None:
         st.sidebar.markdown(f"""
             <div class="team-card">
                 <img src="{member['url']}" class="team-img">
-                <p style="color: #333; font-weight: bold; margin: 0;">{member['name']}</p>
+                <p class="member-name">{member['name']}</p>
             </div>
         """, unsafe_allow_html=True)
 
@@ -192,12 +233,17 @@ if df is not None:
             st.subheader("Revenue Trend over Time")
             daily_rev = filtered_df.groupby('order_date')['total_revenue'].sum().reset_index()
             fig_line = px.line(daily_rev, x='order_date', y='total_revenue', 
-                               template="plotly_white", color_discrete_sequence=['#1F618D'])
+                               template="plotly_dark", color_discrete_sequence=px.colors.sequential.Greens[::-1])
             fig_line.update_traces(line=dict(width=3))
             
             # Adjust Y-axis to start from 0 for better context
             fig_line.update_yaxes(range=[0, daily_rev['total_revenue'].max() * 1.1])
-            fig_line.update_layout(yaxis_tickformat="$,.2s")
+            fig_line.update_layout(
+                yaxis_tickformat="$,.2s",
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                font_color="#c9d1d9"
+            )
             
             st.plotly_chart(fig_line, use_container_width=True)
 
@@ -205,8 +251,13 @@ if df is not None:
             st.subheader("Revenue by Category")
             cat_rev = filtered_df.groupby('product_category')['total_revenue'].sum().reset_index()
             fig_pie = px.pie(cat_rev, values='total_revenue', names='product_category', 
-                            hole=0.4, template="plotly_white",
-                            color_discrete_sequence=px.colors.qualitative.Dark24)
+                            hole=0.4, template="plotly_dark",
+                            color_discrete_sequence=px.colors.sequential.Greens[::-1])
+            fig_pie.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                font_color="#c9d1d9"
+            )
             st.plotly_chart(fig_pie, use_container_width=True)
 
         # Graphs Row 2
@@ -216,12 +267,17 @@ if df is not None:
             st.subheader("Top Regions by Sales")
             reg_rev = filtered_df.groupby('customer_region')['total_revenue'].sum().sort_values(ascending=False).reset_index()
             fig_bar = px.bar(reg_rev, x='customer_region', y='total_revenue', 
-                            color='total_revenue', color_continuous_scale='Viridis',
-                            template="plotly_white")
+                            color='total_revenue', color_continuous_scale='Greens',
+                            template="plotly_dark")
             
             # Adjust Y-axis to start from 0 to show full bars
             fig_bar.update_yaxes(range=[0, reg_rev['total_revenue'].max() * 1.1])
-            fig_bar.update_layout(yaxis_tickformat="$,.2s")
+            fig_bar.update_layout(
+                yaxis_tickformat="$,.2s",
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                font_color="#c9d1d9"
+            )
             
             st.plotly_chart(fig_bar, use_container_width=True)
 
@@ -229,8 +285,13 @@ if df is not None:
             st.subheader("Payment Method Distribution")
             pay_dist = filtered_df['payment_method'].value_counts().reset_index()
             fig_donut = px.pie(pay_dist, values='count', names='payment_method', 
-                               hole=0.4, template="plotly_white",
-                               color_discrete_sequence=px.colors.qualitative.Safe)
+                               hole=0.4, template="plotly_dark",
+                               color_discrete_sequence=px.colors.sequential.Greens[::-1])
+            fig_donut.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                font_color="#c9d1d9"
+            )
             st.plotly_chart(fig_donut, use_container_width=True)
 
     # --- Revenue Analysis Page ---
@@ -246,12 +307,17 @@ if df is not None:
             ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         ).reset_index()
         fig_day = px.bar(day_rev, x='day_of_week', y='total_revenue', 
-                        color='total_revenue', color_continuous_scale='Viridis',
+                        color='total_revenue', color_continuous_scale='Greens',
                         labels={'total_revenue': 'Total Revenue ($)', 'day_of_week': 'Day'})
         
         # Adjust Y-axis to start from 0
         fig_day.update_yaxes(range=[0, day_rev['total_revenue'].max() * 1.1])
-        fig_day.update_layout(yaxis_tickformat="$,.2s") # Compact currency format (e.g., $4.8M)
+        fig_day.update_layout(
+            yaxis_tickformat="$,.2s",
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#c9d1d9"
+        ) # Compact currency format (e.g., $4.8M)
         
         st.plotly_chart(fig_day, use_container_width=True)
         
@@ -261,11 +327,17 @@ if df is not None:
                                  hover_data=['product_id'], 
                                  opacity=0.5,
                                  size_max=12,
-                                 color_discrete_sequence=px.colors.qualitative.Dark24,
-                                 template="plotly_white",
+                                 color_discrete_sequence=px.colors.sequential.Greens[::-1],
+                                 template="plotly_dark",
                                  labels={'price': 'Unit Price ($)', 'total_revenue': 'Total Revenue ($)'})
         
-        fig_scatter.update_layout(xaxis_tickformat="$", yaxis_tickformat="$,.0f")
+        fig_scatter.update_layout(
+            xaxis_tickformat="$", 
+            yaxis_tickformat="$,.0f",
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#c9d1d9"
+        )
         st.plotly_chart(fig_scatter, use_container_width=True)
 
     # --- Category Performance Page ---
@@ -306,7 +378,13 @@ if df is not None:
         st.subheader("Review Count vs. Ratings")
         fig_bubble = px.scatter(cat_stats, x='review_count', y='rating', 
                                size='total_revenue', color='product_category',
-                               text='product_category', template="plotly_white")
+                               text='product_category', template="plotly_dark",
+                               color_discrete_sequence=px.colors.sequential.Greens[::-1])
+        fig_bubble.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#c9d1d9"
+        )
         st.plotly_chart(fig_bubble, use_container_width=True)
 
         st.divider()
@@ -332,7 +410,9 @@ if df is not None:
                 radialaxis=dict(visible=True, range=[0, 1])
             ),
             showlegend=True,
-            template="plotly_white"
+            template="plotly_dark",
+            paper_bgcolor="rgba(0,0,0,0)",
+            font_color="#c9d1d9"
         )
         st.plotly_chart(fig_radar, use_container_width=True)
         st.caption("Values are normalized (0 to 1) for comparison across different scales.")
@@ -405,10 +485,13 @@ if df is not None:
                         ))
                         
                         fig_forecast.update_layout(
-                            template="plotly_white",
+                            template="plotly_dark",
                             xaxis_title="Date",
                             yaxis_title="Revenue ($)",
-                            hovermode="x unified"
+                            hovermode="x unified",
+                            paper_bgcolor="rgba(0,0,0,0)",
+                            plot_bgcolor="rgba(0,0,0,0)",
+                            font_color="#c9d1d9"
                         )
                         st.plotly_chart(fig_forecast, use_container_width=True)
                         
@@ -416,7 +499,12 @@ if df is not None:
                         with st.expander("View Model Components (Trends & Seasonality)"):
                             st.write("Trend and seasonal patterns extracted by the model:")
                             daily_trend = forecast[['ds', 'trend']]
-                            fig_trend = px.line(daily_trend, x='ds', y='trend', title="Model Trend")
+                            fig_trend = px.line(daily_trend, x='ds', y='trend', title="Model Trend", template="plotly_dark")
+                            fig_trend.update_layout(
+                                paper_bgcolor="rgba(0,0,0,0)",
+                                plot_bgcolor="rgba(0,0,0,0)",
+                                font_color="#c9d1d9"
+                            )
                             st.plotly_chart(fig_trend, use_container_width=True)
                 else:
                     st.write("Click 'Generate Forecast' to refresh the prediction.")
@@ -425,40 +513,40 @@ if df is not None:
 
     # --- About Project Page ---
     elif page == "About Project":
-        st.title("📋 Satış Verisi Analizi")
-        st.markdown("### E-ticaret satış verilerini analiz edip görselleştiren Python projesi")
+        st.title("📋 Sales Data Analysis")
+        st.markdown("### Python project for analyzing and visualizing e-commerce sales data")
         
         st.divider()
         
         c1, c2 = st.columns(2)
         
         with c1:
-            st.subheader("✅ Yapılması Gerekenler")
+            st.subheader("✅ Project Scope")
             st.markdown("""
-            1. **Veri temizleme**
-            2. **Trend analizi**
-            3. **Kategori bazlı analiz**
-            4. **Dashboard oluşturma**
+            1. **Data Cleaning**
+            2. **Trend Analysis**
+            3. **Category-based Analysis**
+            4. **Dashboard Creation**
             """)
             
-            st.subheader("📌 Proje Detayları")
-            st.info("**Zorluk:** Beginner | **Tema:** 📊 Data Analysis")
+            st.subheader("📌 Project Details")
+            st.info("**Difficulty:** Beginner | **Theme:** 📊 Data Analysis")
             
         with c2:
-            st.subheader("📋 Görevler ve Zaman Çizelgesi")
+            st.subheader("📋 Tasks & Timeline")
             tasks = {
-                "Veri Temizleme": "6h",
-                "Keşifsel Analiz": "8h",
-                "Trend Analizi": "8h",
-                "Görselleştirme": "8h",
-                "Öngörülü Satış Tahmini": "20h"
+                "Data Cleaning": "6h",
+                "Exploratory Analysis": "8h",
+                "Trend Analysis": "8h",
+                "Visualization": "8h",
+                "Predictive Forecasting": "20h"
             }
             
             for task, time in tasks.items():
                 st.markdown(f"- {task} (**⏱️ ~{time}**)")
 
         st.divider()
-        st.subheader("🚀 Proje Ekibi")
+        st.subheader("🚀 Project Team")
         tc1, tc2, tc3 = st.columns(3)
         
         with tc1:
