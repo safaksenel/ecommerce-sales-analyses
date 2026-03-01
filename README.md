@@ -43,10 +43,41 @@ ecommerce-sales-analyses/
    pip install -r requirements.txt
    ```
 
-3. Run the dashboard:
+47. Run the dashboard:
    ```bash
    streamlit run main.py
    ```
+
+## 🖼️ Dashboard & AI Forecasting Preview
+
+Below are the snapshots captured from the live dashboard. These visuals were taken directly from the project's data analysis and model outputs.
+
+<p align="center">
+  <img src="dashboard.png" width="800" alt="Dashboard Overview">
+  <br>
+  <i>Figure 1: Executive Dashboard for Sales KPIs</i>
+</p>
+
+<p align="center">
+  <img src="model.png" width="800" alt="AI Sales Prediction">
+  <br>
+  <i>Figure 2: 90-Day Revenue Forecasting with Facebook Prophet</i>
+</p>
+
+<p align="center">
+  <img src="day_analys.png" width="800" alt="Daily Analysis">
+  <br>
+  <i>Figure 3: Daily Revenue Trends and Breakdown</i>
+</p>
+
+<p align="center">
+  <img src="about_project.png" width="800" alt="About project">
+  <br>
+  <i>Figure 4: Portfolio Category Analysis</i>
+</p>
+
+> [!NOTE]
+> All PNG assets included in this repository are real outputs from the data processing and analysis logic within this project.
 
 ## 👥 Project Team
 
